@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.ngrok-input {
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    width: 60%;
+    max-width: 500px;
+    margin-right: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.results {
+    display: none;
+    margin-top: 30px;
+}
+
+.results h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+#commentsContainer {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.comment {
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.comment .author {
+    font-weight: bold;
+}
+
+.comment .brands, .comment .sentiment, .comment .engagement {
+    font-size: 0.9rem;
+}
+
+#downloadReport {
+    margin-top: 20px;
+}

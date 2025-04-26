@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Brand Collaboration Report</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Brand Collaboration Analysis</h1>
+
+        <!-- Ngrok URL input section -->
+        <div class="ngrok-input">
+            <label for="ngrokUrl">Enter Ngrok Backend URL:</label>
+            <input type="text" id="ngrokUrl" placeholder="e.g., http://abcd1234.ngrok.io" required>
+            <button id="setNgrokUrl">Set Ngrok URL</button>
+        </div>
+        
+        <div class="form-container">
+            <label for="videoUrl">Enter YouTube Video URL:</label>
+            <input type="text" id="videoUrl" placeholder="Paste YouTube URL here" required>
+            <button id="analyzeButton">Analyze</button>
+        </div>
+
+        <div class="results">
+            <h2>Analysis Results</h2>
+            <div id="analysisSummary"></div>
+            <div id="commentsContainer"></div>
+            <button id="downloadReport" style="display:none;">Download PDF Report</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
