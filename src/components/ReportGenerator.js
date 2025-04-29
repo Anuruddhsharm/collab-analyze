@@ -1,10 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import config from '../config';
+import { FaDownload } from 'react-icons/fa';
 
 const ReportGenerator = ({ videoId, comments }) => {
   const generateReport = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/download-report', {
+      const response = await axios.post(`${config.getBackendUrl()}/download-report`, {
         video_id: videoId,
         comments: comments
       }, {
@@ -31,8 +33,9 @@ const ReportGenerator = ({ videoId, comments }) => {
         onClick={generateReport} 
         className="btn btn-primary"
         disabled={!comments || comments.length === 0}
+        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
       >
-        Download PDF Report
+        <FaDownload /> Download PDF Report
       </button>
     </div>
   );
