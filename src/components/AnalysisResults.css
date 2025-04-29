@@ -1,0 +1,111 @@
+.analysis-results {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.brand-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.brand-btn {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.brand-btn.active {
+  background: #4285f4;
+  color: white;
+  border-color: #4285f4;
+}
+
+.comment-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.comment-text {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.analysis-chip {
+  background: #f8f9fa;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.tag {
+  font-weight: 600;
+  color: #5f6368;
+  margin-right: 4px;
+}
+
+.brand-tag {
+  color: #4285f4;
+}
+
+progress {
+  width: 100%;
+  height: 6px;
+  margin-top: 4px;
+}
+
+.grade-badge {
+  grid-column: 1 / -1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.grade-Aplus { background: #0d652d; color: white; }
+.grade-A { background: #34a853; color: white; }
+.grade-B { background: #fbbc05; color: #202124; }
+.grade-C { background: #f29900; color: #202124; }
+.grade-D { background: #e37400; color: white; }
+.grade-F { background: #d93025; color: white; }
+
+.sentiment-positive { background: #e6f4ea; }
+.sentiment-negative { background: #fce8e6; }
+.sentiment-neutral { background: #f8f9fa; }
+
+.authentic { background: #e6f4ea; }
+.inauthentic { background: #fce8e6; }
+
+.muted {
+  color: #9aa0a6;
+  font-style: italic;
+}
