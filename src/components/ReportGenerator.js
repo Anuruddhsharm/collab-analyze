@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const ReportGenerator = ({ results, backendUrl }) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState('');
 
   const generateReport = async () => {
     setIsGenerating(true);
@@ -21,7 +20,6 @@ const ReportGenerator = ({ results, backendUrl }) => {
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        setDownloadUrl(url);
         
         // Trigger download
         const a = document.createElement('a');
@@ -30,6 +28,7 @@ const ReportGenerator = ({ results, backendUrl }) => {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
       }
     } catch (err) {
       console.error('Error generating report:', err);
