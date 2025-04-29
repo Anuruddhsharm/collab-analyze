@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const AnalysisResults = ({ results }) => {
   const sentimentStats = results.results.reduce((stats, comment) => {
@@ -85,6 +86,21 @@ const AnalysisResults = ({ results }) => {
       </div>
     </div>
   );
+};
+
+AnalysisResults.propTypes = {
+  results: PropTypes.shape({
+    video_id: PropTypes.string,
+    comments_analyzed: PropTypes.number,
+    results: PropTypes.arrayOf(
+      PropTypes.shape({
+        text: PropTypes.string,
+        sentiment: PropTypes.string,
+        sentiment_score: PropTypes.number,
+        brands: PropTypes.arrayOf(PropTypes.string)
+      })
+    ).isRequired
+  }).isRequired
 };
 
 export default AnalysisResults;
