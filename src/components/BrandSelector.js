@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const BrandSelector = ({ selectedBrands, setSelectedBrands }) => {
   const allBrands = ['nike', 'adidas', 'apple', 'samsung', 'google', 'microsoft'];
@@ -29,6 +30,11 @@ const BrandSelector = ({ selectedBrands, setSelectedBrands }) => {
       </div>
     </div>
   );
+};
+
+BrandSelector.propTypes = {
+  selectedBrands: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setSelectedBrands: PropTypes.func.isRequired
 };
 
 export default BrandSelector;
