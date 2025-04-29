@@ -1,48 +1,31 @@
 {
-  "name": "youtube-brand-monitoring",
+  "name": "brand-collab-analyzer",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "prop-types": "^15.8.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-import": "^2.27.5"
+    "react-router-dom": "^6.14.2",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
+    "react-chartjs-2": "^5.2.0",
+    "@mui/material": "^5.14.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "react-icons": "^4.10.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest",
-      "plugin:react/recommended",
-      "plugin:jsx-a11y/recommended"
-    ],
-    "rules": {
-      "react/prop-types": "error",
-      "react/react-in-jsx-scope": "off",
-      "jsx-a11y/anchor-is-valid": [
-        "error",
-        {
-          "components": ["Link"],
-          "specialLink": ["to"]
-        }
-      ]
-    },
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    }
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -55,10 +38,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0"
   }
 }
