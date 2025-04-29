@@ -1,189 +1,224 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import './AnalysisResults.css';
+import React from 'react';
+import { Bar, Pie, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import { FaThumbsUp, FaComment, FaStar, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
-const AnalysisResults = ({ results }) => {
-  const comments = results.results;
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
-  // Stats
-  const sentimentStats = comments.reduce((stats, comment) => {
-    stats[comment.sentiment] = (stats[comment.sentiment] || 0) + 1;
-    return stats;
-  }, {});
+const AnalysisResults = ({ results, videoTitle }) => {
+  if (!results) return null;
 
-  const brandMentions = comments.reduce((mentions, comment) => {
-    comment.brands.forEach(brand => {
-      mentions[brand] = (mentions[brand] || 0) + 1;
-    });
-    return mentions;
-  }, {});
+  const { comments_analyzed, brand_mentions, positive_sentiment, avg_engagement, top_brands, results: comments } = results;
 
-  // State for sorting & filtering
-  const [sortedComments, setSortedComments] = useState([...comments].sort((a, b) => b.engagement_score - a.engagement_score));
-  const [activeBrand, setActiveBrand] = useState(null);
-
-  const handleSort = (type) => {
-    const newSorted = [...sortedComments];
-    switch (type) {
-      case 'engagement':
-        newSorted.sort((a, b) => b.engagement_score - a.engagement_score);
-        break;
-      case 'trend':
-        newSorted.sort((a, b) => b.trend_relevance - a.trend_relevance);
-        break;
-      case 'grade':
-        const gradeOrder = { 'A+': 6, 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'F': 1, 'N/A': 0 };
-        newSorted.sort((a, b) => gradeOrder[b.collab_grade] - gradeOrder[a.collab_grade]);
-        break;
-      case 'sentiment':
-        const sentimentOrder = { 'positive': 2, 'neutral': 1, 'negative': 0 };
-        newSorted.sort((a, b) => sentimentOrder[b.sentiment] - sentimentOrder[a.sentiment]);
-        break;
-      default:
-        break;
-    }
-    setSortedComments(newSorted);
+  // Prepare data for charts
+  const sentimentData = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      data: [
+        comments.filter(c => c.sentiment === 'positive').length,
+        comments.filter(c => c.sentiment === 'neutral').length,
+        comments.filter(c => c.sentiment === 'negative').length
+      ],
+      backgroundColor: ['#4ade80', '#60a5fa', '#f87171']
+    }]
   };
 
-  const filteredComments = activeBrand
-    ? sortedComments.filter(comment => comment.brands?.includes(activeBrand.toLowerCase()))
-    : sortedComments;
+  const engagementData = {
+    labels: comments.map((_, i) => `Comment ${i+1}`),
+    datasets: [{
+      label: 'Engagement Score',
+      data: comments.map(c => c.engagement_score),
+      backgroundColor: '#6366f1'
+    }]
+  };
+
+  const brandMentionData = {
+    labels: top_brands.map(b => b.brand),
+    datasets: [{
+      data: top_brands.map(b => b.count),
+      backgroundColor: [
+        '#111', '#000', '#A3AAAE', '#1428A0', '#4285F4', '#7FBA00'
+      ]
+    }]
+  };
+
+  const gradeDistribution = {
+    labels: ['A+', 'A', 'B', 'C', 'D', 'F'],
+    datasets: [{
+      data: [
+        comments.filter(c => c.collab_grade === 'A+').length,
+        comments.filter(c => c.collab_grade === 'A').length,
+        comments.filter(c => c.collab_grade === 'B').length,
+        comments.filter(c => c.collab_grade === 'C').length,
+        comments.filter(c => c.collab_grade === 'D').length,
+        comments.filter(c => c.collab_grade === 'F').length
+      ],
+      backgroundColor: [
+        '#10b981', '#34d399', '#60a5fa', '#fbbf24', '#f97316', '#ef4444'
+      ]
+    }]
+  };
 
   return (
-    <div className="analysis-results">
-      <h2>Analysis Results</h2>
-
-      {/* Stats Summary */}
-      <div className="stats">
-        <div className="stat-card">
-          <h3>Total Comments Analyzed</h3>
-          <p>{results.comments_analyzed}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Brand Mentions Found</h3>
-          <p>{comments.length}</p>
-        </div>
-      </div>
-
-      {/* Sentiment Distribution */}
-      <div className="sentiment-distribution">
-        <h3>Sentiment Distribution</h3>
-        <div className="sentiment-bars">
-          {Object.entries(sentimentStats).map(([sentiment, count]) => (
-            <div key={sentiment} className="sentiment-bar">
-              <div className="sentiment-label">{sentiment}</div>
-              <div 
-                className={`bar ${sentiment}`} 
-                style={{ width: `${(count / comments.length) * 100}%` }}
-              >
-                {count}
-              </div>
+    <div>
+      <h2 style={{ marginBottom: '1.5rem' }}>Analysis Results: {videoTitle}</h2>
+      
+      <div className="grid">
+        {/* Summary Cards */}
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Summary</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <FaComment size={24} color="#4361ee" />
+              <h4>Total Comments</h4>
+              <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{comments_analyzed}</p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Brand Mentions */}
-      <div className="brand-mentions">
-        <h3>Brand Mentions</h3>
-        <div className="brand-bars">
-          {Object.entries(brandMentions).map(([brand, count]) => (
-            <div key={brand} className="brand-bar">
-              <div className="brand-label">{brand.charAt(0).toUpperCase() + brand.slice(1)}</div>
-              <div 
-                className="bar" 
-                style={{ width: `${(count / comments.length) * 100}%` }}
-              >
-                {count}
-              </div>
+            <div style={{ textAlign: 'center' }}>
+              <FaThumbsUp size={24} color="#4361ee" />
+              <h4>Brand Mentions</h4>
+              <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{brand_mentions}</p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sort & Filter Controls */}
-      <div className="filters">
-        <select onChange={(e) => handleSort(e.target.value)} className="sort-select">
-          <option value="engagement">Sort by Engagement</option>
-          <option value="trend">Sort by Trend Relevance</option>
-          <option value="grade">Sort by Collab Grade</option>
-          <option value="sentiment">Sort by Sentiment</option>
-        </select>
-
-        <div className="brand-filter">
-          {['Nike', 'Adidas', 'Apple', 'Samsung', 'Google', 'Microsoft'].map(brand => (
-            <button
-              key={brand}
-              className={`brand-btn ${activeBrand === brand.toLowerCase() ? 'active' : ''}`}
-              onClick={() => setActiveBrand(activeBrand === brand.toLowerCase() ? null : brand.toLowerCase())}
-            >
-              {brand}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Comment Cards */}
-      <div className="comments-list">
-        {filteredComments.map((comment, index) => (
-          <div key={index} className="comment-card">
-            <p className="comment-text">{comment.text}</p>
-            <div className="analysis-grid">
-              <div className="analysis-chip">
-                <span className="tag brand-tag">Brands:</span>
-                {comment.brands?.length > 0 ? (
-                  comment.brands.join(", ")
-                ) : (
-                  <span className="muted">None detected</span>
-                )}
-              </div>
-              <div className={`analysis-chip sentiment-${comment.sentiment}`}>
-                <span className="tag">Sentiment:</span> {comment.sentiment}
-              </div>
-              <div className="analysis-chip">
-                <span className="tag">Engagement:</span> 
-                <progress value={comment.engagement_score} max="1"></progress>
-                {(comment.engagement_score * 100).toFixed(0)}%
-              </div>
-              <div className={`analysis-chip ${comment.authentic ? 'authentic' : 'inauthentic'}`}>
-                <span className="tag">Authentic:</span> 
-                {comment.authentic ? '✓' : '✗'}
-              </div>
-              <div className="analysis-chip">
-                <span className="tag">Trend Match:</span>
-                <progress value={comment.trend_relevance} max="1"></progress>
-                {(comment.trend_relevance * 100).toFixed(0)}%
-              </div>
-              {comment.collab_grade !== "N/A" && (
-                <div className={`grade-badge grade-${comment.collab_grade.replace('+', 'plus')}`}>
-                  Grade: {comment.collab_grade}
-                </div>
-              )}
+            <div style={{ textAlign: 'center' }}>
+              <FaStar size={24} color="#4361ee" />
+              <h4>Positive Sentiment</h4>
+              <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{positive_sentiment}</p>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <FaCheckCircle size={24} color="#4361ee" />
+              <h4>Avg Engagement</h4>
+              <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{avg_engagement.toFixed(2)}</p>
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* Top Brands */}
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Top Mentioned Brands</h3>
+          <div style={{ height: '300px' }}>
+            <Doughnut 
+              data={brandMentionData} 
+              options={{ 
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { position: 'bottom' }
+                }
+              }} 
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid">
+        {/* Sentiment Analysis */}
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Sentiment Analysis</h3>
+          <div style={{ height: '300px' }}>
+            <Pie 
+              data={sentimentData} 
+              options={{ 
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { position: 'bottom' }
+                }
+              }} 
+            />
+          </div>
+        </div>
+
+        {/* Collaboration Grades */}
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Collaboration Grades</h3>
+          <div style={{ height: '300px' }}>
+            <Doughnut 
+              data={gradeDistribution} 
+              options={{ 
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { position: 'bottom' }
+                }
+              }} 
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Engagement Scores */}
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Engagement Scores</h3>
+        <div style={{ height: '400px' }}>
+          <Bar 
+            data={engagementData} 
+            options={{ 
+              maintainAspectRatio: false,
+              scales: {
+                y: { beginAtZero: true, max: 1 }
+              },
+              plugins: {
+                legend: { display: false }
+              }
+            }} 
+          />
+        </div>
+      </div>
+
+      {/* Top Comments */}
+      <div className="card">
+        <h3 style={{ marginTop: 0 }}>Top Collaboration Opportunities</h3>
+        <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#f1f5f9' }}>
+                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Comment</th>
+                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Brands</th>
+                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Sentiment</th>
+                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Engagement</th>
+                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comments
+                .filter(c => c.collab_grade && c.collab_grade !== 'N/A')
+                .sort((a, b) => {
+                  const gradeOrder = { 'A+': 6, 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'F': 1 };
+                  return gradeOrder[b.collab_grade] - gradeOrder[a.collab_grade] || 
+                         b.engagement_score - a.engagement_score;
+                })
+                .slice(0, 10)
+                .map((comment, index) => (
+                  <tr key={index} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                    <td style={{ padding: '0.75rem' }}>{comment.text}</td>
+                    <td style={{ padding: '0.75rem' }}>
+                      {comment.brands.join(', ')}
+                    </td>
+                    <td style={{ padding: '0.75rem', color: 
+                      comment.sentiment === 'positive' ? '#10b981' :
+                      comment.sentiment === 'negative' ? '#ef4444' : '#64748b'
+                    }}>
+                      {comment.sentiment}
+                    </td>
+                    <td style={{ padding: '0.75rem' }}>
+                      {comment.engagement_score.toFixed(2)}
+                    </td>
+                    <td style={{ 
+                      padding: '0.75rem',
+                      fontWeight: 'bold',
+                      color: 
+                        comment.collab_grade === 'A+' ? '#10b981' :
+                        comment.collab_grade === 'A' ? '#34d399' :
+                        comment.collab_grade === 'B' ? '#60a5fa' :
+                        comment.collab_grade === 'C' ? '#fbbf24' :
+                        comment.collab_grade === 'D' ? '#f97316' : '#ef4444'
+                    }}>
+                      {comment.collab_grade}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
-};
-
-AnalysisResults.propTypes = {
-  results: PropTypes.shape({
-    video_id: PropTypes.string,
-    comments_analyzed: PropTypes.number,
-    results: PropTypes.arrayOf(
-      PropTypes.shape({
-        text: PropTypes.string,
-        sentiment: PropTypes.string,
-        sentiment_score: PropTypes.number,
-        engagement_score: PropTypes.number,
-        trend_relevance: PropTypes.number,
-        authentic: PropTypes.bool,
-        collab_grade: PropTypes.string,
-        brands: PropTypes.arrayOf(PropTypes.string)
-      })
-    ).isRequired
-  }).isRequired
 };
 
 export default AnalysisResults;
