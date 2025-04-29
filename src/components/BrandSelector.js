@@ -1,9 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Chip, Stack } from '@mui/material';
+
+const BRANDS = [
+  { name: "nike", color: "#111" },
+  { name: "adidas", color: "#000" },
+  { name: "apple", color: "#A3AAAE" },
+  { name: "samsung", color: "#1428A0" },
+  { name: "google", color: "#4285F4" },
+  { name: "microsoft", color: "#7FBA00" }
+];
 
 const BrandSelector = ({ selectedBrands, setSelectedBrands }) => {
-  const allBrands = ['nike', 'adidas', 'apple', 'samsung', 'google', 'microsoft'];
-  
   const toggleBrand = (brand) => {
     if (selectedBrands.includes(brand)) {
       setSelectedBrands(selectedBrands.filter(b => b !== brand));
@@ -13,28 +20,26 @@ const BrandSelector = ({ selectedBrands, setSelectedBrands }) => {
   };
 
   return (
-    <div className="brand-selector">
-      <label>Select Brands to Monitor:</label>
-      <div className="brand-checkboxes">
-        {allBrands.map(brand => (
-          <div key={brand} className="brand-checkbox">
-            <input
-              type="checkbox"
-              id={brand}
-              checked={selectedBrands.includes(brand)}
-              onChange={() => toggleBrand(brand)}
-            />
-            <label htmlFor={brand}>{brand.charAt(0).toUpperCase() + brand.slice(1)}</label>
-          </div>
+    <div className="card">
+      <h3 style={{ marginTop: 0 }}>Select Brands to Monitor</h3>
+      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        {BRANDS.map(brand => (
+          <Chip
+            key={brand.name}
+            label={brand.name}
+            onClick={() => toggleBrand(brand.name)}
+            variant={selectedBrands.includes(brand.name) ? "filled" : "outlined"}
+            style={{
+              backgroundColor: selectedBrands.includes(brand.name) ? brand.color : 'transparent',
+              color: selectedBrands.includes(brand.name) ? 'white' : brand.color,
+              borderColor: brand.color,
+              marginBottom: '0.5rem'
+            }}
+          />
         ))}
-      </div>
+      </Stack>
     </div>
   );
-};
-
-BrandSelector.propTypes = {
-  selectedBrands: PropTypes.arrayOf(PropTypes.string).isRequired,
-  setSelectedBrands: PropTypes.func.isRequired
 };
 
 export default BrandSelector;
