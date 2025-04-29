@@ -1,84 +1,41 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import axios from 'axios';
 
-const ReportGenerator = ({ backendUrl, videoId, comments }) => {
-  const [isGenerating, setIsGenerating] = React.useState(false);
-
+const ReportGenerator = ({ videoId, comments }) => {
   const generateReport = async () => {
-    if (!backendUrl) {
-      alert('Backend URL is missing.');
-      return;
-    }
-
-    setIsGenerating(true);
     try {
-      console.log('Sending request with:', {
+      const response = await axios.post('http://localhost:5000/download-report', {
         video_id: videoId,
         comments: comments
+      }, {
+        responseType: 'blob'
       });
 
-      const response = await fetch(`${backendUrl}/download-report`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          video_id: videoId,
-          comments: comments,
-        }),
-      });
-
-      console.log('Response status:', response.status);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to download report');
-      }
-
-      const blob = await response.blob();
-      console.log('Received blob of size:', blob.size);
-
-      if (blob.size === 0) {
-        throw new Error('Received empty PDF file');
-      }
-
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `brand_collab_report_${videoId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-      }, 60000);
-
-    } catch (err) {
-      console.error('Error generating report:', err);
-      alert(`Error: ${err.message}`);
-    } finally {
-      setIsGenerating(false);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `brand_collab_report_${videoId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Failed to generate report. Please try again.');
     }
   };
 
   return (
-    <div className="report-generator">
+    <div className="card">
+      <h3 style={{ marginTop: 0 }}>Generate Report</h3>
       <button 
         onClick={generateReport} 
-        disabled={isGenerating}
-        className="report-btn"
+        className="btn btn-primary"
+        disabled={!comments || comments.length === 0}
       >
-        {isGenerating ? 'Generating...' : 'Download Full Report (PDF)'}
+        Download PDF Report
       </button>
     </div>
   );
-};
-
-ReportGenerator.propTypes = {
-  backendUrl: PropTypes.string.isRequired,
-  videoId: PropTypes.string.isRequired,
-  comments: PropTypes.array.isRequired
 };
 
 export default ReportGenerator;
