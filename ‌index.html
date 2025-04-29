@@ -1,26 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Comments Analyzer</title>
-    <link rel="stylesheet" href="./styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Brand Sentiment Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    #results {
+      margin-top: 30px;
+    }
+    .comment {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>YouTube Comments Analyzer</h1>
-        <form id="analyzeForm">
-            <label for="ngrokLink">Ngrok Link:</label>
-            <input type="url" id="ngrokLink" placeholder="Enter your ngrok URL" required>
+  <h1>🔍 YouTube Brand Sentiment Analyzer</h1>
 
-            <label for="youtubeLink">YouTube Video Link:</label>
-            <input type="url" id="youtubeLink" placeholder="Enter the YouTube video URL" required>
+  <label for="ngrok-url">Enter your Flask App (ngrok) URL:</label>
+  <input type="text" id="ngrok-url" placeholder="https://your-ngrok-url.ngrok.io" />
 
-            <button type="submit">Analyze Comments</button>
-        </form>
-        <div id="results"></div>
-    </div>
+  <label for="video-url">Enter YouTube Video URL:</label>
+  <input type="text" id="video-url" placeholder="https://www.youtube.com/watch?v=..." />
 
-    <script src="./script.js"></script>
+  <button onclick="analyzeVideo()">Analyze Comments</button>
+  <button id="downloadBtn" onclick="downloadReport()" style="display:none;">📄 Download PDF Report</button>
+
+  <div id="results"></div>
+
+  <script>
+    let lastResults = [];
+    let lastVideoId = "";
+
+    async function analyzeVideo() {
+      const ngrokUrl = document.getElementById("ngrok-url").value;
+      const videoUrl = document.getElementById("video-url").value;
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "⏳ Analyzing comments...";
+
+      try {
+        const response = await fetch(`${ngrokUrl}/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ video_url: videoUrl }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          lastResults = data.results;
+          lastVideoId = data.video_id;
+          document.getElementById("downloadBtn").style.display = "block";
+
+          resultsDiv.innerHTML = `<h3>Analyzed ${data.comments_analyzed} comments</h3>`;
+          data.results.forEach((comment, i) => {
+            resultsDiv.innerHTML += `
+              <div class="comment">
+                <strong>Comment #${i + 1}:</strong><br>
+                ${comment.text}<br>
+                <strong>Sentiment:</strong> ${comment.sentiment} (${(comment.sentiment_score * 100).toFixed(2)}%)<br>
+                <strong>Brands:</strong> ${comment.brands.join(", ") || "None"}
+              </div>`;
+          });
+        } else {
+          resultsDiv.innerHTML = `❌ Error: ${data.error}`;
+        }
+      } catch (err) {
+        resultsDiv.innerHTML = `❌ Request failed: ${err.message}`;
+      }
+    }
+
+    async function downloadReport() {
+      const ngrokUrl = document.getElementById("ngrok-url").value;
+      try {
+        const response = await fetch(`${ngrokUrl}/download-report`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            video_id: lastVideoId,
+            comments: lastResults
+          }),
+        });
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `report_${lastVideoId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        alert("Download failed: " + err.message);
+      }
+    }
+  </script>
 </body>
 </html>
