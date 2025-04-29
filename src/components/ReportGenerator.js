@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const ReportGenerator = ({ results, backendUrl }) => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -21,7 +22,6 @@ const ReportGenerator = ({ results, backendUrl }) => {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         
-        // Trigger download
         const a = document.createElement('a');
         a.href = url;
         a.download = `brand_monitoring_report_${results.video_id}.pdf`;
@@ -48,6 +48,14 @@ const ReportGenerator = ({ results, backendUrl }) => {
       </button>
     </div>
   );
+};
+
+ReportGenerator.propTypes = {
+  results: PropTypes.shape({
+    video_id: PropTypes.string.isRequired,
+    results: PropTypes.array.isRequired
+  }).isRequired,
+  backendUrl: PropTypes.string.isRequired
 };
 
 export default ReportGenerator;
