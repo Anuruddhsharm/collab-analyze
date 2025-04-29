@@ -1,4 +1,5 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Navbar from '../components/Navbar';
 import BrandSelector from '../components/BrandSelector';
 import AnalysisResults from '../components/AnalysisResults';
@@ -39,7 +40,6 @@ const Home = ({ backendUrl, setBackendUrl }) => {
       const data = await response.json();
       
       if (response.ok) {
-        // Filter comments by selected brands
         const filteredResults = {
           ...data,
           results: data.results.filter(comment => 
@@ -114,6 +114,11 @@ const Home = ({ backendUrl, setBackendUrl }) => {
       </div>
     </div>
   );
+};
+
+Home.propTypes = {
+  backendUrl: PropTypes.string.isRequired,
+  setBackendUrl: PropTypes.func.isRequired
 };
 
 export default Home;
