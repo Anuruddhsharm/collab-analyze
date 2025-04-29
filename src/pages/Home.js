@@ -3,6 +3,8 @@ import axios from 'axios';
 import BrandSelector from '../components/BrandSelector';
 import AnalysisResults from '../components/AnalysisResults';
 import ReportGenerator from '../components/ReportGenerator';
+import BackendConfig from '../components/BackendConfig';
+import config from '../config';
 
 const Home = () => {
   const [videoUrl, setVideoUrl] = useState('');
@@ -26,7 +28,7 @@ const Home = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/analyze', {
+      const response = await axios.post(`${config.getBackendUrl()}/analyze`, {
         video_url: videoUrl,
         brands: selectedBrands
       });
@@ -46,8 +48,8 @@ const Home = () => {
   return (
     <div className="container">
       <div className="card">
-        <h1 style={{ marginTop: 0 }}>Brand Collaboration Analyzer</h1>
-        <p>Analyze YouTube comments to identify potential brand collaboration opportunities.</p>
+        <h1 style={{ marginTop: 0 }}>🔥 Ultimate Brand Collab Analyzer</h1>
+        <p>Analyze YouTube comments for brand collaboration potential</p>
         
         <div className="input-group">
           <label htmlFor="video-url">YouTube Video URL</label>
@@ -92,6 +94,8 @@ const Home = () => {
           <ReportGenerator videoId={results.video_id} comments={results.results} />
         </>
       )}
+
+      <BackendConfig />
     </div>
   );
 };
