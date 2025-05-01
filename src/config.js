@@ -1,5 +1,8 @@
-// Get backend URL from localStorage or use default
 const getBackendUrl = () => {
+  // Use Netlify function in production
+  if (process.env.NODE_ENV === 'production') {
+    return '/.netlify/functions/analyze';
+  }
   return localStorage.getItem('backendUrl') || process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 };
 
