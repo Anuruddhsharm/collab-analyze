@@ -5,6 +5,7 @@ import AnalysisResults from '../components/AnalysisResults';
 import ReportGenerator from '../components/ReportGenerator';
 import BackendConfig from '../components/BackendConfig';
 import config from '../config';
+import { toast } from 'react-hot-toast';
 
 const Home = () => {
   const [videoUrl, setVideoUrl] = useState('');
@@ -19,27 +20,34 @@ const Home = () => {
       return;
     }
 
-    if (selectedBrands.length === 0) {
-      setError('Please select at least one brand to monitor');
-      return;
-    }
-
     setLoading(true);
     setError(null);
+    setResults(null);
 
     try {
-      const response = await axios.post(`${config.getBackendUrl()}/analyze`, {
+      const response = await axios.post(config.getBackendUrl(), {
         video_url: videoUrl,
         brands: selectedBrands
+      }, {
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.data.error) {
-        setError(response.data.error);
-      } else {
-        setResults(response.data);
+        throw new Error(response.data.error);
       }
+
+      setResults(response.data);
+      toast.success('Analysis completed successfully!');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to analyze video. Please try again.');
+      console.error('Analysis error:', err);
+      const errorMsg = err.response?.data?.error || 
+                      err.message || 
+                      'Failed to analyze video. Please try again.';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -68,13 +76,7 @@ const Home = () => {
         />
 
         {error && (
-          <div style={{ 
-            padding: '1rem', 
-            backgroundColor: '#fee2e2', 
-            color: '#b91c1c', 
-            borderRadius: '4px',
-            marginBottom: '1rem'
-          }}>
+          <div className="error-message">
             {error}
           </div>
         )}
