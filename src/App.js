@@ -1,5 +1,5 @@
 import React from 'react';
-import AnalysisResults from './AnalysisResults';
+import AnalysisResults from './components/AnalysisResults.js';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
