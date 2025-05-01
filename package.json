@@ -13,15 +13,16 @@
     "@mui/material": "^5.14.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "react-icons": "^4.10.1"
+    "react-icons": "^4.10.1",
+    "react-hot-toast": "^2.4.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-  "deploy": "netlify deploy --prod"
+    "deploy": "netlify deploy --prod"
   },
   "eslintConfig": {
     "extends": [
@@ -39,7 +40,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-      
     ]
   }
 }
