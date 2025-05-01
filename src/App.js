@@ -1,17 +1,21 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Navbar from './components/Navbar';
+import AnalysisForm from './components/AnalysisForm';
+import { Toaster } from 'react-hot-toast';
+import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <Navbar />
+      <header className="App-header">
+        <h1>Brand Collaboration Analyzer</h1>
+        <p>Analyze YouTube comments for brand collaboration potential</p>
+      </header>
+      
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
+        <AnalysisForm />
       </main>
+      
+      <Toaster position="bottom-right" />
     </div>
   );
 }
