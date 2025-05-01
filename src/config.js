@@ -6,11 +6,22 @@ const getBackendUrl = () => {
   return localStorage.getItem('backendUrl') || process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 };
 
+const setBackendUrl = (url) => {
+  try {
+    // Validate URL format
+    if (!url.match(/^https?:\/\/.+/)) {
+      throw new Error('Invalid URL format');
+    }
+    localStorage.setItem('backendUrl', url);
+  } catch (error) {
+    console.error('Error saving backend URL:', error);
+    throw error;
+  }
+};
+
 const config = {
   getBackendUrl,
-  setBackendUrl: (url) => {
-    localStorage.setItem('backendUrl', url);
-  }
+  setBackendUrl
 };
 
 export default config;
