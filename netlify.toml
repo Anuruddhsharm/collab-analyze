@@ -1,5 +1,5 @@
 [build]
-  command = "CI= npm run build"  # The CI= prefix disables warnings as errors
+  command = "CI= npm run build"
   publish = "build"
   functions = "src/functions"
 
@@ -7,7 +7,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
